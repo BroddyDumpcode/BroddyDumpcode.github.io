@@ -158,154 +158,96 @@
         [Process completed - Exit 0]
     </footer>
     <script>
-        async function getIPInfo() {
-            const ipElem = document.getElementById('ip-address');
-            const locElem = document.getElementById('location');
-            const ispElem = document.getElementById('isp');
-        
-            try {
-                // Menggunakan Cloudflare Trace (Sangat stabil & jarang diblokir)
-                const response = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-                const text = await response.text();
-                
-                // Parsing data dari format teks Cloudflare
-                const data = text.split('\n').reduce((obj, line) => {
-                    const [key, value] = line.split('=');
-                    if (key) obj[key] = value;
-                    return obj;
-                }, {});
-        
-                const userIP = data.ip;
-                ipElem.innerText = userIP;
-        
-                // Untuk lokasi & ISP, kita gunakan ipapi.co sebagai pelengkap
-                const resLoc = await fetch(`https://ipapi.co/${userIP}/json/`);
-                const dataLoc = await resLoc.json();
-        
-                if (!dataLoc.error) {
-                    locElem.innerText = `${dataLoc.city}, ${dataLoc.country_name}`;
-                    ispElem.innerText = dataLoc.org;
-                } else {
-                    locElem.innerText = "LOCATION_HIDDEN";
-                    ispElem.innerText = "ISP_PRIVATE";
-                }
-        
-            } catch (error) {
-                console.error("Diagnostic Error:", error);
-                ipElem.innerText = "127.0.0.1 (LOCALHOST)";
-                locElem.innerText = "OFFLINE_MODE";
-                ispElem.innerText = "DISCONNECTED";
-            }
-        }
-    
-        // 1. Fungsi Utama: Mengambil data dari API PythonAnywhere
+    // 1. Fungsi Utama: Mengambil data dari API PythonAnywhere
         async function downloadVideo() {
             const url = document.getElementById('video-url').value;
             const status = document.getElementById('download-status');
-        
+    
             if (!url) {
                 status.innerText = "ERROR: URL_NOT_FOUND";
                 status.style.color = "#ff4141";
                 return;
             }
-        
-            // Animasi Terminal Loading
-            status.innerHTML = `agungxpp@blog:~$ python3 yt-dlp.py --info<br>
-            <span style="color:#f1c40f;">[ ANALYZING_TARGET ]</span> [##########----------] 50%`;
+    
+            status.innerHTML = "agungxpp@blog:~$ python3 yt-dlp.py --info<br><span style='color:#f1c40f;'>[ ANALYZING_TARGET ]</span> [##########----------] 50%";
             status.style.color = "#00ff41";
-        
+    
             try {
-                // GANTI 'agungxp66' dengan username PythonAnywhere kamu jika berbeda
                 const api_url = `https://agungxp66.pythonanywhere.com/get_info?url=${encodeURIComponent(url)}`;
-                
                 const response = await fetch(api_url);
                 const data = await response.json();
-        
+    
                 if (data.error) {
-                    status.innerHTML = `<span style="color:#ff4141;">SYSTEM_FAILURE: ${data.error}</span><br>
-                    <a href="https://savefrom.net/?url=${url}" target="_blank" style="color:#fff;">[ TRY_MIRROR_LINK ]</a>`;
+                    status.innerHTML = `<span style="color:#ff4141;">SYSTEM_FAILURE: ${data.error}</span><br><a href="https://savefrom.net/?url=${url}" target="_blank" style="color:#fff;">[ TRY_MIRROR_LINK ]</a>`;
                 } else {
-                    // Tampilan Box Metadata Terminal Style
                     status.innerHTML = `
                         <div style="border: 1px dashed #00ff41; padding: 15px; margin-top: 15px; background: #050505; color: #00ff41;">
                             <span style="color: #f1c40f;">[ METADATA_EXTRACTED ]</span><br>
                             TITLE    : ${data.title}<br>
                             UPLOADER : ${data.uploader}<br>
                             STATUS   : <span id="dl-status">READY_FOR_TRANSFER</span><br><br>
-                            
                             <button onclick="forceDownload('${data.download_url}', '${data.title.replace(/[^a-z0-9]/gi, '_')}.mp4')" 
                                id="exec-btn"
                                style="color:#000; background:#00ff41; padding: 10px 20px; border:none; cursor:pointer; font-family:'Courier New'; font-weight:bold; width:100%;">
                                >> EXECUTE_FILE_TRANSFER <<
                             </button>
-                            
-                            <p style="font-size: 0.7rem; color: #888; margin-top: 10px; line-height: 1.2;">
-                                *Jika transfer gagal (CORS), video akan dibuka di tab baru. 
-                                Klik kanan pada video > 'Save Video As' untuk menyimpan.
-                            </p>
                         </div>
                     `;
                 }
             } catch (e) {
-                console.error("Fetch Error:", e);
-                status.innerText = "CONNECTION_ERROR: API_OFFLINE_OR_BLOCKED";
+                status.innerText = "CONNECTION_ERROR: API_OFFLINE";
                 status.style.color = "#ff4141";
             }
-
-        // 2. Fungsi Pendukung: Memaksa Download lewat Memori Browser (Blob)
+        } // <--- PENUTUP FUNGSI downloadVideo
+    
+        // 2. Fungsi Force Download (Blob)
         async function forceDownload(url, filename) {
             const statusText = document.getElementById('dl-status');
             const btn = document.getElementById('exec-btn');
             
-            // Update Status UI
             statusText.innerText = "BUFFERING_TO_RAM...";
             statusText.style.color = "#f1c40f";
             btn.disabled = true;
-            btn.style.opacity = "0.5";
-            btn.innerText = "PROCESSING...";
-        
+    
             try {
-                // Mengambil data biner video
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                
                 const blob = await response.blob();
                 const blobUrl = window.URL.createObjectURL(blob);
                 
-                // Membuat elemen link tersembunyi untuk mentrigger download
                 const a = document.createElement('a');
-                a.style.display = 'none';
                 a.href = blobUrl;
                 a.download = filename;
                 document.body.appendChild(a);
+                a.click();
                 
-                a.click(); // Klik otomatis
-                
-                // Bersihkan memori
                 setTimeout(() => {
                     window.URL.revokeObjectURL(blobUrl);
-                    document.body.removeChild(a);
+                    a.remove();
                     statusText.innerText = "TRANSFER_COMPLETED";
                     statusText.style.color = "#00ff41";
                     btn.disabled = false;
-                    btn.style.opacity = "1";
-                    btn.innerText = ">> RE_EXECUTE_TRANSFER <<";
                 }, 100);
-        
             } catch (error) {
-                console.warn("Blob download failed, falling back to window.open", error);
-                statusText.innerText = "CORS_LIMIT_REACHED_OPENING_NEW_TAB";
-                statusText.style.color = "#ff4141";
-                
-                // Fallback: Buka di tab baru jika fetch diblokir browser
+                statusText.innerText = "CORS_LIMIT_OPENING_NEW_TAB";
                 window.open(url, '_blank');
-                
                 btn.disabled = false;
-                btn.style.opacity = "1";
-                btn.innerText = ">> TRY_MANUAL_DOWNLOAD <<";
             }
+        } // <--- PENUTUP FUNGSI forceDownload
+    
+        // Fungsi IP (Jangan sampai terhapus)
+        async function getIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                document.getElementById('user-ip').innerText = data.ip;
+                document.getElementById('user-loc').innerText = `${data.city}, ${data.country_name}`;
+            } catch (e) {
+                console.log("IP Info Error");
+            }
+        }
+    
         document.addEventListener('DOMContentLoaded', getIPInfo);
-</script>
+    </script>
     
 </body>
 </html>
