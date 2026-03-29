@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Downloader</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0d0d0d;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .container {
+        text-align: center;
+        background: rgba(255,255,255,0.05);
+        padding: 40px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-size: 28px;
+    }
+
+    input {
+        width: 300px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 15px;
+    }
+
+    button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        background: #00ffcc;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #00ccaa;
+        transform: scale(1.05);
+    }
+
+    .glow {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, #00ffcc55, transparent);
+        border-radius: 50%;
+        filter: blur(80px);
+        animation: move 8s infinite alternate;
+    }
+
+    @keyframes move {
+        from { transform: translate(-100px, -100px); }
+        to { transform: translate(100px, 100px); }
+    }
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<div class="container">
+    <h1>🔥 Video Downloader</h1>
+    <input type="text" id="url" placeholder="Paste link here...">
+    <br>
+    <button onclick="download()">Extract</button>
+</div>
+
+<script>
+function download() {
+    let url = document.getElementById("url").value
+
+    if (!url) {
+        alert("Masukin link dulu bro 😅")
+        return
+    }
+
+    alert("Nanti connect ke backend di sini 😎\nURL: " + url)
+}
+</script>
+
+</body>
+</html>
