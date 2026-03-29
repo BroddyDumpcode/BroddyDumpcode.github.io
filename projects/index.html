@@ -210,7 +210,33 @@
     
             status.innerText = "Analyzing target... [##########----------] 50%";
             status.style.color = "#00ff41";
-    
+            try{
+                const api_url = "https://agungxp66.pythonanywhere.com/get_info?url=${encodeURIComponent(url)}";
+                const response = await fetch(api_url);
+                const data = await response.json();
+                if (data.error) {
+                        status.innerText = "SYSTEM_FAILURE: " + data.error;
+                        status.style.color = "#ff4141";
+                    } else {
+                        // Menampilkan hasil dari yt-dlp
+                        status.innerHTML = `
+                            <div style="border: 1px dashed #00ff41; padding: 10px; margin-top: 15px; background: #050505;">
+                                <span style="color: #f1c40f;">[ METADATA_EXTRACTED ]</span><br>
+                                TITLE    : ${data.title}<br>
+                                UPLOADER : ${data.uploader}<br>
+                                DURATION : ${data.duration}s<br><br>
+                                <a href="${data.download_url}" target="_blank" 
+                                   style="color:#000; background:#00ff41; padding: 5px 10px; text-decoration: none; font-weight: bold;">
+                                   >> DOWNLOAD_NOW <<
+                                </a>
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    status.innerText = "CONNECTION_ERROR: API is unreachable.";
+                    status.style.color = "#ff4141";
+                }
+            }
             setTimeout(() => {
                 status.innerHTML = `SUCCESS: Link generated. <br> <a href="https://savefrom.net/?url=${url}" target="_blank" style="color:#fff; text-decoration:underline;">[ CLICK_TO_DOWNLOAD ]</a>`;
             }, 1200);
