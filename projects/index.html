@@ -162,31 +162,39 @@
             const ipElem = document.getElementById('ip-address');
             const locElem = document.getElementById('location');
             const ispElem = document.getElementById('isp');
-    
+        
             try {
-                // Menggunakan ipify untuk IP (sangat stabil)
-                const resIp = await fetch('https://api.ipify.org?format=json');
-                const dataIp = await resIp.json();
-                ipElem.innerText = dataIp.ip;
-    
-                // Menggunakan ip-api.com (Catatan: ip-api gratis hanya lewat http, 
-                // jadi kita pakai ipapi.co versi cadangan yang lebih kuat)
-                const resLoc = await fetch(`https://ipapi.co/${dataIp.ip}/json/`);
-                const dataLoc = await resLoc.json();
+                // Menggunakan Cloudflare Trace (Sangat stabil & jarang diblokir)
+                const response = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+                const text = await response.text();
                 
-                if(dataLoc.error) {
-                    locElem.innerText = "LIMIT_REACHED";
-                    ispElem.innerText = "PROVIDER_BLOCK";
-                } else {
+                // Parsing data dari format teks Cloudflare
+                const data = text.split('\n').reduce((obj, line) => {
+                    const [key, value] = line.split('=');
+                    if (key) obj[key] = value;
+                    return obj;
+                }, {});
+        
+                const userIP = data.ip;
+                ipElem.innerText = userIP;
+        
+                // Untuk lokasi & ISP, kita gunakan ipapi.co sebagai pelengkap
+                const resLoc = await fetch(`https://ipapi.co/${userIP}/json/`);
+                const dataLoc = await resLoc.json();
+        
+                if (!dataLoc.error) {
                     locElem.innerText = `${dataLoc.city}, ${dataLoc.country_name}`;
                     ispElem.innerText = dataLoc.org;
+                } else {
+                    locElem.innerText = "LOCATION_HIDDEN";
+                    ispElem.innerText = "ISP_PRIVATE";
                 }
-    
+        
             } catch (error) {
-                console.error("Error fetching IP:", error);
-                ipElem.innerText = "FAILED_TO_CONNECT";
-                locElem.innerText = "CHECK_ADBLOCKER";
-                ispElem.innerText = "OFFLINE";
+                console.error("Diagnostic Error:", error);
+                ipElem.innerText = "127.0.0.1 (LOCALHOST)";
+                locElem.innerText = "OFFLINE_MODE";
+                ispElem.innerText = "DISCONNECTED";
             }
         }
     
