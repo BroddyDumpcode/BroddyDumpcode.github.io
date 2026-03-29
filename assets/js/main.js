@@ -40,3 +40,37 @@ window.addEventListener("load", () => {
         document.body.style.opacity = 1;
     }, 100);
 });
+// SCANLINE
+const scan = document.createElement("div");
+scan.classList.add("scanline");
+document.body.appendChild(scan);
+
+
+// TYPING EFFECT
+const text = [
+    "Initializing system...",
+    "Connecting to server...",
+    "Access granted ✔",
+    "Welcome to Brody Tools 😈"
+];
+
+let line = 0;
+let char = 0;
+const speed = 40;
+
+function type() {
+    if (line < text.length) {
+        if (char < text[line].length) {
+            document.getElementById("typing").innerHTML += text[line].charAt(char);
+            char++;
+            setTimeout(type, speed);
+        } else {
+            document.getElementById("typing").innerHTML += "<br>";
+            line++;
+            char = 0;
+            setTimeout(type, 500);
+        }
+    }
+}
+
+type();
