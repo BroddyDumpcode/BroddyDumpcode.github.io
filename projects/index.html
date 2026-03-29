@@ -222,29 +222,53 @@
                     status.innerText = "SYSTEM_FAILURE: " + data.error;
                     status.style.color = "#ff4141";
                 } else {
-                    // Tampilan Terminal Style untuk Metadata
                     status.innerHTML = `
-                        <div style="border: 1px dashed #00ff41; padding: 10px; margin-top: 15px; background: #050505; color: #00ff41;">
+                        <div style="border: 1px dashed #00ff41; padding: 15px; margin-top: 15px; background: #050505; color: #00ff41;">
                             <span style="color: #f1c40f;">[ METADATA_EXTRACTED ]</span><br>
                             TITLE    : ${data.title}<br>
-                            UPLOADER : ${data.uploader}<br>
-                            DURATION : ${data.duration}s<br><br>
-                            <a href="${data.download_url}" target="_blank" 
-                               style="color:#000; background:#00ff41; padding: 5px 10px; text-decoration: none; font-weight: bold; display: inline-block;">
-                               >> DOWNLOAD_NOW <<
-                            </a>
+                            STATUS   : <span id="dl-status">READY</span><br><br>
+                            
+                            <button onclick="forceDownload('${data.download_url}', '${data.title}.mp4')" 
+                               style="color:#000; background:#00ff41; padding: 10px 20px; border:none; cursor:pointer; font-family:'Courier New'; font-weight:bold;">
+                               >> EXECUTE_DOWNLOAD <<
+                            </button>
                         </div>
                     `;
-                }
             } catch (e) {
                 console.error(e);
                 status.innerText = "CONNECTION_ERROR: API is unreachable.";
                 status.style.color = "#ff4141";
             }
-            // KODE SETTIMEOUT LAMA SUDAH DIHAPUS BIAR GAK OVERWRITE HASIL API
-        }
-    
-        // Pastikan fungsi dipanggil saat halaman siap
+            
+            // Tambahkan fungsi baru ini di bawah fungsi downloadVideo
+            async function forceDownload(url, filename) {
+                const statusText = document.getElementById('dl-status');
+                statusText.innerText = "DOWNLOADING_TO_BUFFER...";
+                statusText.style.color = "#f1c40f";
+            
+                try {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    window.URL.revokeObjectURL(blobUrl);
+                    a.remove();
+                    
+                    statusText.innerText = "SUCCESS_COMPLETED";
+                    statusText.style.color = "#00ff41";
+                } catch (error) {
+                    console.error(error);
+                    // Jika Fetch gagal karena CORS, arahkan ke tab baru sebagai cadangan terakhir
+                    statusText.innerText = "CORS_BLOCK_DETECTED_OPENING_TAB";
+                    window.open(url, '_blank');
+                }
+            }
         document.addEventListener('DOMContentLoaded', getIPInfo);
 </script>
     
