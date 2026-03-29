@@ -1,137 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<link rel="stylesheet" href="/assets/css/style.css">
-<meta charset="UTF-8">
-<h1 class="glitch" data-text="Brody Dev">Brody Dev</h1>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal_Blog:~/home</title>
+    
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --main-color: #00ff41;
+            --path-color: #5dade2; /* Biru */
+            --font-stack: 'Courier New', Courier, monospace;
+        }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #050505;
-    color: white;
-    overflow-x: hidden;
-}
+        body {
+            background-color: var(--bg-color);
+            color: var(--main-color);
+            font-family: var(--font-stack);
+            margin: 0;
+            padding: 5% 10%;
+            line-height: 1.5;
+        }
+        
+        header { margin-bottom: 2rem; }
+        
+        .user-host { color: #ffffff; }
+        .sep { color: var(--main-color); }
+        .path { color: var(--path-color); }
 
-/* glow background */
-.glow {
-    position: fixed;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #00ffcc33, transparent);
-    filter: blur(120px);
-    animation: move 10s infinite alternate;
-    z-index: 0;
-}
+        nav {
+            background: #1a1a1a;
+            padding: 10px;
+            border-left: 3px solid var(--main-color);
+            margin: 1rem 0;
+        }
 
-@keyframes move {
-    from { transform: translate(-200px, -200px); }
-    to { transform: translate(200px, 200px); }
-}
+        nav a {
+            color: var(--main-color);
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
 
-/* container */
-.container {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding-top: 80px;
-}
+        nav a:hover { text-decoration: underline; background: var(--main-color); color: var(--bg-color); }
 
-/* profile */
-.profile img {
-    width: 120px;
-    border-radius: 50%;
-    border: 3px solid #00ffcc;
-    box-shadow: 0 0 20px #00ffcc88;
-}
+        /*List*/
+        .content-area { margin-top: 3rem; }
+        
+        .post-entry {
+            border-bottom: 1px dashed #333;
+            padding: 15px 0;
+            transition: 0.3s;
+        }
 
-.profile h1 {
-    margin: 15px 0 5px;
-}
+        .post-entry:hover { padding-left: 10px; border-color: var(--main-color); }
 
-.profile p {
-    color: #aaa;
-}
+        .file-icon { color: #f1c40f; margin-right: 10px; } /* Kuning */
 
-/* card */
-.card {
-    margin: 40px auto;
-    width: 320px;
-    padding: 20px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    backdrop-filter: blur(15px);
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-}
+        .post-link {
+            color: var(--main-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
 
-/* tools */
-.tool {
-    margin: 15px 0;
-    padding: 15px;
-    background: #111;
-    border-radius: 10px;
-    transition: 0.3s;
-    cursor: pointer;
-}
+        .metadata {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
 
-.tool:hover {
-    transform: scale(1.05);
-    background: #1a1a1a;
-}
+        .cursor {
+            background: var(--main-color);
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
 
-.tool a {
-    color: #00ffcc;
-    text-decoration: none;
-    font-weight: bold;
-}
+        @keyframes blink { 50% { opacity: 0; } }
 
-/* footer */
-.footer {
-    margin-top: 50px;
-    color: #666;
-}
-</style>
+        footer { margin-top: 4rem; font-size: 0.8rem; opacity: 0.5; }
 
+        @media (max-width: 600px) { body { padding: 20px; } }
+    </style>
 </head>
-
 <body>
 
-<div class="glow"></div>
+    <header>
+        <div class="terminal-top">
+            <span class="user-host">broddydumpcode@github.io</span><span class="sep">:</span><span class="path">~/blog/home/index.html</span>
+        </div>
+        
+        <nav>
+            <a href="/">./home</a>
+            <a href="/about">./about</a>
+            <a href="/projects">./projects</a>
+            <a href="/archive">./archive</a>
+        </nav>
+    </header>
 
-<div class="container">
-    <div class="terminal">
-        <p id="typing"></p>
-    </div>
-    <!-- PROFILE -->
-    <div class="profile">
-        <!-- GANTI USERNAME DI SINI -->
-        <img src="https://github.com/broddydumpcode.png" alt="profile">
-        <h1>Brody Dev</h1>
-        <p>Web Tools & Downloader </p>
-    </div>
+    <main class="content-area">
+        <p>Last login: Mon Mar 29 18:38:47 2026 from 127.0.0.1</p>
+        <p>agungxpp@blog:~$ ls -lh ./posts/</p>
+        
+        <div class="post-list">
+            
+            <div class="post-entry">
+                <span class="file-icon">📄</span>
+                <a href="posts/hello-world.html" class="post-link">hello-world.md</a>
+                <span class="metadata">Size: 2.4kb | Perms: -rw-r--r-- | Date: 2026-03-29</span>
+            </div>
 
-    <!-- TOOLS -->
-    <div class="card">
-        <h2>My Tools</h2>
+            <div class="post-entry">
+                <span class="file-icon">📄</span>
+                <a href="posts/my-setup.html" class="post-link">pc-setup-2026.md</a>
+                <span class="metadata">Size: 5.1kb | Perms: -rw-r--r-- | Date: 2026-03-25</span>
+            </div>
 
-        <div class="tool">
-            <a href="/downloader/">🔥 Video Downloader</a>
-            <p>Download video dari berbagai platform</p>
+            <div class="post-entry">
+                <span class="file-icon">📄</span>
+                <a href="posts/coding-tips.html" class="post-link">clean-code-tips.txt</a>
+                <span class="metadata">Size: 1.8kb | Perms: -rw-r--r-- | Date: 2026-03-20</span>
+            </div>
+
         </div>
 
-        <!-- Tambah tools nanti di sini -->
-        <div class="tool">
-            <a href="#">⚙️ Coming Soon</a>
-            <p>More tools on the way...</p>
-        </div>
-    </div>
+        <p style="margin-top: 2rem;">agungxpp@blog:~$ <span class="cursor"></span></p>
+    </main>
 
-    <div class="footer">
-        © 2026 Brody
-    </div>
+    <footer>
+        [Process completed - Exit 0]
+    </footer>
 
-</div>
-<script src="/assets/js/main.js"></script>
 </body>
 </html>
